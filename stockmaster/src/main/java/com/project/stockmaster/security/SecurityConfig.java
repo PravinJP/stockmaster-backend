@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -27,6 +28,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register").permitAll()
                         .requestMatchers("/api/auth/send-otp").permitAll()
                         .requestMatchers("/api/auth/reset-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("MANAGER")
+
+                        .requestMatchers(HttpMethod.GET, "/api/products/**")
+                        .hasAnyRole("MANAGER", "USER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
